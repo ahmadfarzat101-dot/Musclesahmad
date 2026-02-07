@@ -1,0 +1,131 @@
+--[[ 
+   AHMED & MOHA HUB - MUSCLE LEGENDS 
+   Designed for Delta Executor
+]]
+
+-- إعدادات الواجهة
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local FastTrainBtn = Instance.new("TextButton")
+local SmartRebirthBtn = Instance.new("TextButton")
+local StealthBtn = Instance.new("TextButton")
+local Corner = Instance.new("UICorner")
+
+-- ربط الواجهة بالنظام (CoreGui لضمان عدم الاختفاء)
+ScreenGui.Name = "AhmedMohaHub"
+ScreenGui.Parent = game:GetService("CoreGui")
+
+-- تصميم الإطار الرئيسي
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+MainFrame.Size = UDim2.new(0, 220, 0, 280)
+MainFrame.Active = true
+MainFrame.Draggable = true -- سحب القائمة في الموبايل
+
+Corner.CornerRadius = UDim.new(0, 10)
+Corner.Parent = MainFrame
+
+-- العنوان
+Title.Name = "Title"
+Title.Parent = MainFrame
+Title.Text = "أحمد وموها HUB"
+Title.Size = UDim2.new(1, 0, 0.2, 0)
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+
+local btnColor = Color3.fromRGB(55, 55, 55)
+
+---------------------------------------------------------
+-- 1. زر التمرين الشامل (يشتغل مع أي أداة وفي أي مكان)
+---------------------------------------------------------
+FastTrainBtn.Name = "FastTrain"
+FastTrainBtn.Text = "تمرين شامل: OFF"
+FastTrainBtn.Parent = MainFrame
+FastTrainBtn.Position = UDim2.new(0.1, 0, 0.25, 0)
+FastTrainBtn.Size = UDim2.new(0.8, 0, 0.18, 0)
+FastTrainBtn.BackgroundColor3 = btnColor
+FastTrainBtn.TextColor3 = Color3.new(1, 1, 1)
+
+local training = false
+FastTrainBtn.MouseButton1Click:Connect(function()
+    training = not training
+    FastTrainBtn.Text = training and "تمرين شامل: ON" or "تمرين شامل: OFF"
+    FastTrainBtn.BackgroundColor3 = training and Color3.fromRGB(0, 150, 0) or btnColor
+    
+    task.spawn(function()
+        while training do
+            local char = game.Players.LocalPlayer.Character
+            if char then
+                local tool = char:FindFirstChildOfClass("Tool")
+                if tool then 
+                    tool:Activate() 
+                end
+            end
+            task.wait(0.001) -- سرعة قصوى
+        end
+    end)
+end)
+
+---------------------------------------------------------
+-- 2. زر الريبرث الذكي (تبديل البتات تلقائياً)
+---------------------------------------------------------
+SmartRebirthBtn.Name = "SmartRebirth"
+SmartRebirthBtn.Text = "ريبرث + تبديل بتات"
+SmartRebirthBtn.Parent = MainFrame
+SmartRebirthBtn.Position = UDim2.new(0.1, 0, 0.48, 0)
+SmartRebirthBtn.Size = UDim2.new(0.8, 0, 0.18, 0)
+SmartRebirthBtn.BackgroundColor3 = btnColor
+SmartRebirthBtn.TextColor3 = Color3.new(1, 1, 1)
+
+SmartRebirthBtn.MouseButton1Click:Connect(function()
+    local rStorage = game:GetService("ReplicatedStorage")
+    local remote = rStorage:FindFirstChild("rEvents") and rStorage.rEvents:FindFirstChild("petEvent")
+    
+    -- 1. تجهيز بتات الريبرث
+    if remote then
+        remote:FireServer("equipPet", "Tribal Overlord")
+        task.wait(0.5)
+    end
+    
+    -- 2. تنفيذ الريبرث
+    if rStorage.rEvents:FindFirstChild("rebirthEvent") then
+        rStorage.rEvents.rebirthEvent:FireServer()
+    end
+    task.wait(0.5)
+    
+    -- 3. إعادة بتات التمرين
+    if remote then
+        remote:FireServer("equipPet", "Swift Samurai")
+    end
+end)
+
+---------------------------------------------------------
+-- 3. زر الشاشة السوداء (Stealth Mode)
+---------------------------------------------------------
+StealthBtn.Name = "StealthMode"
+StealthBtn.Text = "شاشة سوداء"
+StealthBtn.Parent = MainFrame
+StealthBtn.Position = UDim2.new(0.1, 0, 0.71, 0)
+StealthBtn.Size = UDim2.new(0.8, 0, 0.18, 0)
+StealthBtn.BackgroundColor3 = btnColor
+StealthBtn.TextColor3 = Color3.new(1, 1, 1)
+
+local blackFrame = Instance.new("Frame")
+blackFrame.Size = UDim2.new(5, 0, 5, 0)
+blackFrame.Position = UDim2.new(-1, 0, -1, 0)
+blackFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+blackFrame.Visible = false
+blackFrame.ZIndex = 10 -- ليكون فوق كل شيء
+blackFrame.Parent = ScreenGui
+
+StealthBtn.MouseButton1Click:Connect(function()
+    blackFrame.Visible = not blackFrame.Visible
+    -- ملاحظة: القائمة ستكون تحت الشاشة السوداء، اضغط مكان الزر لإعادتها
+end)
+
+print("تم تشغيل سكربت أحمد وموها بنجاح!")
