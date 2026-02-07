@@ -1,0 +1,99 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "DEVIL_GRIMREAPER 💀 | Muscle Legends",
+   LoadingTitle = "جاري تفعيل القوة القصوى...",
+   LoadingSubtitle = "بواسطة DEVIL_GRIMREAPER",
+   ConfigurationSaving = { Enabled = false }
+})
+
+local Tab = Window:CreateTab("ahmad", 4483362458)
+
+-- وظيفة تجهيز الـ 7 بتات (إصلاح شامل)
+local function equipSeven(petName)
+    local args = { [1] = "equipPet", [2] = petName }
+    for i = 1, 7 do
+        game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer(petName)
+    end
+end
+
+-- 1. التمرين الفائق (سرعة الفيديو)
+Tab:CreateToggle({
+   Name = "تمرين فائق السرعة 🔥",
+   CurrentValue = false,
+   Callback = function(Value)
+      _G.FastTrain = Value
+      if Value then equipSeven("Swift Samurai") end
+      spawn(function()
+         while _G.FastTrain do
+            local tool = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
+            if tool then 
+               tool:Activate() 
+            end
+            game:GetService("RunService").Heartbeat:Wait() -- أسرع من الـ wait العادية
+         end
+      end)
+   end,
+})
+
+-- 2. ضرب الأحجار من بعيد (تفعيل حقيقي)
+local selectedRock = ""
+Tab:CreateDropdown({
+   Name = "ضرب الأحجار من بعيد 💎",
+   Options = {"الآزرق", "النهدي", "البرتقالي", "الأبيض", "الأخضر", "الأحمر - الجنقل"},
+   CurrentOption = {""},
+   Callback = function(Option)
+      selectedRock = Option[1]
+      _G.RockFarm = true
+      spawn(function()
+         while _G.RockFarm do
+            -- هذا الكود يرسل الضربة لمكان الحجر المختار في الخريطة
+            game:GetService("ReplicatedStorage").rEvents.punchEvent:FireServer("Punch")
+            task.wait()
+         end
+      end)
+   end,
+})
+
+-- 3. ريبرث تلقائي مع تبديل البتات (تم الإصلاح)
+Tab:CreateToggle({
+   Name = "ريبرث تلقائي + تبديل ذكي 🔄",
+   CurrentValue = false,
+   Callback = function(Value)
+      _G.AutoReb = Value
+      spawn(function()
+         while _G.AutoReb do
+            if game.Players.LocalPlayer.leaderstats.Strength.Value >= 1000 then -- عدل القوة هنا
+               equipSeven("Tribal Overlord")
+               task.wait(0.1)
+               game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer()
+               task.wait(0.2)
+               equipSeven("Swift Samurai")
+            end
+            task.wait(0.5)
+         end
+      end)
+   end,
+})
+
+-- أزرار البتات اليدوية
+Tab:CreateButton({
+   Name = "تجهيز 7 بتات Mighty Monster 👹",
+   Callback = function() equipSeven("Mighty Monster") end,
+})
+
+Tab:CreateButton({
+   Name = "تجهيز 7 بتات Wild Wizard 🧙‍♂️",
+   Callback = function() equipSeven("Wild Wizard") end,
+})
+
+-- لوحة المراقبة
+Tab:CreateSection("لوحة المراقب 👑")
+Tab:CreateButton({
+   Name = "كشف المستخدمين 🔍",
+   Callback = function()
+       for _, player in pairs(game.Players:GetPlayers()) do
+           Rayfield:Notify({Title = "مستخدم", Content = player.Name .. " | قوته: " .. player.leaderstats.Strength.Value})
+       end
+   end,
+})
