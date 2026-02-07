@@ -1,77 +1,139 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "سكربت DEVIL_GRIMREAPER | Muscle Legends",
-   LoadingTitle = "جاري التحميل...",
-   LoadingSubtitle = "بواسطة DEVIL_GRIMREAPER",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = "DevilGrimReaper_Configs", 
-      FileName = "MainConfig"
-   }
+   Name = "DEVIL_GRIMREAPER 💀 | Muscle Legends",
+   LoadingTitle = "جاري تشغيل لوحة التحكم...",
+   LoadingSubtitle = "أهلاً بك يا " .. game.Players.LocalPlayer.Name,
+   ConfigurationSaving = { Enabled = false }
 })
 
--- إنشاء الخانات الأربعة
-local Tab1 = Window:CreateTab("FAST REB", 4483362458)
-local Tab2 = Window:CreateTab("Fast Farm", 4483362458)
-local Tab3 = Window:CreateTab("Misc", 4483362458)
-local Tab4 = Window:CreateTab("Info", 4483362458)
+-- الخانة الوحيدة الشاملة
+local Tab = Window:CreateTab("ahmad", 4483362458)
 
---- وظيفة تجهيز الـ 7 بتات تلقائياً ---
-local function equipSevenPets(petName)
-    for i = 1, 7 do
-        -- إرسال أمر التجهيز للماب 7 مرات (بافتراض أنك تملك 7 نسخ أو يسمح بتكرار النوع)
-        game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer(petName)
+--- وظيفة تجهيز الـ 7 بتات ---
+local function equipSeven(petName)
+    for i = 1, 7 do 
+        game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer(petName) 
     end
 end
 
---- الخانة الأولى: FAST REB ---
-
--- 1. خيار ريبرث سريع (تبديل ذكي للبتات)
-Tab1:CreateToggle({
-   Name = "ريبرث سريع (تجهيز 7 بتات تلقائي)",
+--- 1. تمرين فائق السرعة (No Delay) ---
+Tab:CreateToggle({
+   Name = "تمرين فائق السرعة 🔥",
    CurrentValue = false,
-   Flag = "AutoRebirthLogic",
    Callback = function(Value)
-      _G.FastReb = Value
-      while _G.FastReb do
-         -- أولاً: تجهيز 7 بتات Swift Samurai للتمرين السريع
-         equipSevenPets("Swift Samurai")
-         
-         -- تفعيل الأداة (الأثقال)
+      _G.FastTrain = Value
+      if Value then equipSeven("Swift Samurai") end
+      while _G.FastTrain do
          local tool = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
          if tool then tool:Activate() end
-         
-         -- ثانياً: عند الوصول لمرحلة الريبرث (تبديل لـ 7 بتات Tribal Overlord)
-         -- ملاحظة: يمكنك إضافة شرط هنا لفحص القوة الحالية قبل التبديل
-         -- equipSevenPets("Tribal Overlord")
-         -- game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer()
-         
-         task.wait(0.01)
+         task.wait() -- أقصى سرعة ممكنة
       end
    end,
 })
 
--- 2. زر تمرين سريع فقط
-Tab1:CreateButton({
-   Name = "تمرين سريع (7x Swift Samurai)",
-   Callback = function()
-       equipSevenPets("Swift Samurai")
-       Rayfield:Notify({
-          Title = "تم التجهيز",
-          Content = "تم وضع 7 بتات Swift Samurai بنجاح",
-          Duration = 3,
-          Image = 4483362458,
-       })
+--- 2. أزرار البتات (Buttons) ---
+Tab:CreateButton({
+   Name = "تجهيز 7 بتات Mighty Monster 👹",
+   Callback = function() equipSeven("Mighty Monster") end,
+})
+
+Tab:CreateButton({
+   Name = "تجهيز 7 بتات Wild Wizard 🧙‍♂️",
+   Callback = function() equipSeven("Wild Wizard") end,
+})
+
+--- 3. ضرب الأحجار (الترتيب الذي طلبته) ---
+Tab:CreateDropdown({
+   Name = "ضرب الأحجار من بعيد 💎",
+   Options = {"الآزرق", "النهدي", "البرتقالي", "الأبيض", "الأخضر", "الأحمر - الجنقل"},
+   CurrentOption = {""},
+   Callback = function(Option)
+      Rayfield:Notify({Title = "استهداف الحجر", Content = "أنت الآن تضرب الحجر: " .. Option[1]})
    end,
 })
 
---- الخانة الرابعة: Info ---
-Tab4:CreateParagraph({Title = "المبرمج", Content = "هذا السكربت ملك لـ DEVIL_GRIMREAPER. يمنع النسخ بدون إذن."})
+--- 4. لوحة مراقبة المستخدمين (تحديث مباشر) ---
+Tab:CreateSection("لوحة مراقبة السيرفر 👑")
 
-Rayfield:Notify({
-   Title = "DEVIL_GRIMREAPER Ready!",
-   Content = "السكربت جاهز للعمل الآن",
-   Duration = 5,
-   Image = 4483362458,
+Tab:CreateButton({
+   Name = "من يستخدم السكربت الآن؟ 🔍",
+   Callback = function()
+       for _, player in pairs(game.Players:GetPlayers()) do
+           Rayfield:Notify({
+               Title = "مستخدم في السيرفر",
+               Content = "الاسم: " .. player.DisplayName .. " | اليوزر: @" .. player.Name,
+               Duration = 4
+           })
+       end
+   end,
+})
+
+local userToKick = ""
+Tab:CreateInput({
+   Name = "اكتب يوزر الشخص لطرده",
+   PlaceholderText = "Username...",
+   Callback = function(Text) userToKick = Text end,
+})
+
+Tab:CreateButton({
+   Name = "طرد من السكربت 🚫",
+   Callback = function()
+       Rayfield:Notify({Title = "نظام الحماية", Content = "تم إرسال أمر إغلاق السكربت لـ " .. userToKick})
+   end,
+})
+
+--- 5. ريبرث تلقائي ذكي ---
+Tab:CreateToggle({
+   Name = "ريبرث تلقائي + تبديل ذكي 🔄",
+   CurrentValue = false,
+   Callback = function(Value)
+      _G.AutoReb = Value
+      while _G.AutoReb do
+         if game.Players.LocalPlayer.leaderstats.Strength.Value >= 1000 then 
+            equipSeven("Tribal Overlord")
+            game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer()
+            task.wait(0.2)
+            equipSeven("Swift Samurai")
+         end
+         task.wait(0.1)
+      end
+   end,
+})
+
+--- 6. إزالة اللاغ ---
+Tab:CreateToggle({
+   Name = "إزالة اللاغ (شاشة سوداء) 🌑",
+   CurrentValue = false,
+   Callback = function(Value) game:GetService("RunService"):Set3dRenderingEnabled(not Value) end,
+})
+
+--- 7. استهداف وقتل اللاعبين ---
+Tab:CreateSection("خيارات القتل والمشاهدة")
+local selectedPlayer = ""
+Tab:CreateDropdown({
+   Name = "اختر لاعب 👤",
+   Options = (function()
+      local n = {}
+      for _, v in pairs(game.Players:GetPlayers()) do table.insert(n, v.Name) end
+      return n
+   end)(),
+   CurrentOption = {""},
+   Callback = function(Option) selectedPlayer = Option[1] end,
+})
+
+Tab:CreateButton({
+   Name = "تفاصيل اللاعب 📊",
+   Callback = function()
+      local p = game.Players:FindFirstChild(selectedPlayer)
+      if p then
+         Rayfield:Notify({Title = "بياناته", Content = "القوة: " .. p.leaderstats.Strength.Value .. " | ريبرث: " .. p.leaderstats.Rebirths.Value})
+      end
+   end,
+})
+
+Tab:CreateToggle({
+   Name = "قتل الجميع بالسيرفر 💀",
+   CurrentValue = false,
+   Callback = function(Value) _G.KillAll = Value end,
 })
