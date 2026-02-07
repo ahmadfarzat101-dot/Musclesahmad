@@ -1,0 +1,79 @@
+-- DEVIL_GRIMREAPER Script
+-- تحليل وتصميم يحاكي الفيديو بدقة
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("DEVIL_GRIMREAPER | سكريبت كلان ديفل 🔥", "DarkTheme")
+
+-- القسم الرئيسي: Farm OP
+local FarmTab = Window:NewTab("Farm OP")
+local MainSection = FarmTab:NewSection("واجهة التمرين")
+
+-- تفعيل القوة (Fuerza OP)
+MainSection:NewToggle("Fuerza OP", "زيادة القوة تلقائياً", function(state)
+    getgenv().Fuerza = state
+    while getgenv().Fuerza do
+        task.wait()
+        game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool"):Activate()
+        game:GetService("ReplicatedStorage").Events.StatEvent:FireServer("Strength")
+    end
+end)
+
+-- خيار الشاشة السوداء (Anti Lag)
+local BlackScreen = Instance.new("Frame")
+BlackScreen.Size = UDim2.new(1, 0, 1, 0)
+BlackScreen.BackgroundColor3 = Color3.new(0, 0, 0)
+BlackScreen.ZIndex = 999
+BlackScreen.Parent = game:GetService("CoreGui").RobloxGui
+BlackScreen.Visible = false
+
+MainSection:NewToggle("Anti Lag (Black Screen)", "شاشة سوداء لتقليل اللاك", function(state)
+    BlackScreen.Visible = state
+end)
+
+-- ريبرث تلقائي (Auto Rebirth)
+local RebirthSection = FarmTab:NewSection("Rebirth")
+RebirthSection:NewToggle("Auto Rebirth", "عمل ريبرث تلقائي", function(state)
+    getgenv().Rebirth = state
+    while getgenv().Rebirth do
+        task.wait(1)
+        game:GetService("ReplicatedStorage").Events.RebirthEvent:FireServer()
+    end
+end)
+
+-- قسم التمارين الخاصة (كما في الفيديو)
+local SpecialFarm = FarmTab:NewSection("Farm Sin Packs")
+SpecialFarm:NewToggle("Jungle Squat", "تمرين الغابة", function(state)
+    -- كود التمرين في منطقة Jungle
+end)
+
+SpecialFarm:NewToggle("Rock Farming", "تمرين الصخور", function(state)
+    -- كود تمرين الصخور
+end)
+
+-- قسم البتات (Pet Manager)
+local PetTab = Window:NewTab("Pets")
+local PetSection = PetTab:NewSection("تجهيز البتات المحددة")
+
+PetSection:NewButton("Equip Swift Samurai & Tribal", "تجهيز البتات التي في الصورة", function()
+    local pets = {"Tribal Overlord", "Swift Samurai"}
+    for _, petName in pairs(pets) do
+        game:GetService("ReplicatedStorage").Events.PetEvent:FireServer("Equip", petName)
+    end
+end)
+
+-- منع الخمول (Anti AFK)
+MainSection:NewButton("Anti AFK", "تفعيل منع الطرد", function()
+    local vu = game:GetService("VirtualUser")
+    game:GetService("Players").LocalPlayer.Idled:Connect(function()
+        vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+        wait(1)
+        vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+    end)
+end)
+
+-- تبويبات إضافية (للتصميم فقط)
+Window:NewTab("Calculator")
+Window:NewTab("Kills")
+Window:NewTab("Teleport")
+
+Library:Notify("DEVIL_GRIMREAPER", "تم تحميل واجهة التمرين بنجاح", 5)
