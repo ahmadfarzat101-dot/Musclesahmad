@@ -1,0 +1,87 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "احمد وموها HUB 💀",
+   LoadingTitle = "جاري التشغيل...",
+   LoadingSubtitle = "بواسطة احمد وموها",
+   ConfigurationSaving = { Enabled = false }
+})
+
+-- الخانة المطلوبة
+local Tab = Window:CreateTab("ahmad", 4483362458)
+
+-- وظيفة تجهيز البتات (تبديل نظيف)
+local function equipPet(petName)
+    -- السيرفر في Muscle Legends يقوم بتبديل البت تلقائياً عند طلب تجهيز جديد
+    game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer(petName)
+end
+
+--- 1. خيار تمرين سريع كثيررر ---
+Tab:CreateToggle({
+   Name = "تمرين سريع كثيررر 🔥",
+   CurrentValue = false,
+   Callback = function(Value)
+      _G.FastTrain = Value
+      task.spawn(function()
+         while _G.FastTrain do
+            local tool = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
+            if tool then tool:Activate() end
+            task.wait() 
+         end
+      end)
+   end,
+})
+
+--- 2. زر الريبرث التلقائي والتبديل الذكي (الطلب الأساسي) ---
+Tab:CreateToggle({
+   Name = "ريبرث تلقائي + تبديل بتات (Auto) 🔄",
+   CurrentValue = false,
+   Callback = function(Value)
+      _G.AutoRebirth = Value
+      task.spawn(function()
+         while _G.AutoRebirth do
+            -- فحص القوة: يفضل تغيير رقم 10000000000000 حسب احتياجك للريبرث
+            if game.Players.LocalPlayer.leaderstats.Strength.Value >= 1000000000 then
+                
+                -- أولاً: يشيل بتات التمرين ويحط بتات الريبرث
+                equipPet("Tribal Overlord")
+                task.wait(0.05) -- وقت مستقطع للتأكد من التبديل
+                
+                -- ثانياً: تنفيذ الريبرث
+                game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer()
+                task.wait(0.05)
+                
+                -- ثالثاً: يشيل بتات الريبرث ويرجع بتات التمرين
+                equipPet("Swift Samurai")
+            end
+            task.wait(1) -- فحص القوة كل ثانية لتجنب اللاغ
+         end
+      end)
+   end,
+})
+
+--- 3. زر الشاشة السوداء وإخفاء كل شيء ---
+Tab:CreateToggle({
+   Name = "شاشة سوداء وإخفاء كل شيء 🌑",
+   CurrentValue = false,
+   Callback = function(Value)
+      game:GetService("RunService"):Set3dRenderingEnabled(not Value)
+   end,
+})
+
+--- 4. أزرار يدوية للتحكم السريع ---
+Tab:CreateSection("تحكم يدوي بالبتات")
+
+Tab:CreateButton({
+   Name = "تجهيز Swift Samurai فقط",
+   Callback = function()
+       equipPet("Swift Samurai")
+   end,
+})
+
+Tab:CreateButton({
+   Name = "تجهيز Tribal Overlord فقط",
+   Callback = function()
+       equipPet("Tribal Overlord")
+   end,
+})
