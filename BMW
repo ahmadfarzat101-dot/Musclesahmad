@@ -1,0 +1,239 @@
+--// DEVIL_GRIMREAPER 💀 | Muscle Legends
+--// Tab: ahmad
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Players = game:GetService("Players")
+local RS = game:GetService("RunService")
+local Rep = game:GetService("ReplicatedStorage")
+local LP = Players.LocalPlayer
+
+local Window = Rayfield:CreateWindow({
+   Name = "DEVIL_GRIMREAPER 💀 | Muscle Legends",
+   LoadingTitle = "جاري تفعيل القوة القصوى...",
+   LoadingSubtitle = "بواسطة DEVIL_GRIMREAPER",
+   ConfigurationSaving = { Enabled = false }
+})
+
+local Tab = Window:CreateTab("ahmad", 4483362458)
+
+--=====================[ أدوات مساعدة ]=====================
+local flags = {
+   FastTrain = false,
+   AutoReb = false,
+   FastPunch = false,
+   RockFarm = false,
+   GhostMode = false,
+   KillAll = false,
+   KillTarget = false,
+   WatchTarget = false,
+}
+
+local RE = Rep:WaitForChild("rEvents")
+
+local function equipSeven(petName)
+   for i = 1,7 do
+      RE.equipPetEvent:FireServer(petName)
+   end
+end
+
+local function getTool()
+   local ch = LP.Character
+   if not ch then return nil end
+   return ch:FindFirstChildOfClass("Tool")
+end
+
+--=====================[ 1) تمرين سريع جدًا ]=====================
+Tab:CreateToggle({
+   Name = "⚡ تمرين سريع جدًا (مثل الفيديو)",
+   CurrentValue = false,
+   Callback = function(v)
+      flags.FastTrain = v
+      if v then equipSeven("Swift Samurai") end
+      task.spawn(function()
+         while flags.FastTrain do
+            local tool = getTool()
+            if tool then tool:Activate() end
+            RS.Heartbeat:Wait()
+         end
+      end)
+   end
+})
+
+--=====================[ 2) ريبرث تلقائي ذكي ]=====================
+local REBIRTH_STRENGTH = 1000 -- عدّلها لو حاب
+
+Tab:CreateToggle({
+   Name = "🔁 ريبرث تلقائي (ما يوقف)",
+   CurrentValue = false,
+   Callback = function(v)
+      flags.AutoReb = v
+      task.spawn(function()
+         while flags.AutoReb do
+            local ls = LP:FindFirstChild("leaderstats")
+            if ls and ls:FindFirstChild("Strength") then
+               if ls.Strength.Value >= REBIRTH_STRENGTH then
+                  equipSeven("Tribal Overlord")
+                  task.wait(0.05)
+                  RE.rebirthEvent:FireServer()
+                  task.wait(0.1)
+                  equipSeven("Swift Samurai")
+               end
+            end
+            task.wait(0.05)
+         end
+      end)
+   end
+})
+
+--=====================[ 3) ضرب اللاعبين بسرعة ]=====================
+Tab:CreateToggle({
+   Name = "👊 ضرب لاعبين بسرعة",
+   CurrentValue = false,
+   Callback = function(v)
+      flags.FastPunch = v
+      task.spawn(function()
+         while flags.FastPunch do
+            RE.punchEvent:FireServer("Punch")
+            RS.Heartbeat:Wait()
+         end
+      end)
+   end
+})
+
+--=====================[ 4) ضرب الأحجار من بعيد (اختيار) ]=====================
+local RockOptions = {
+   "🔵 الأزرق",
+   "🟣 البنفسجي",
+   "🟠 البرتقالي",
+   "⚪ الأبيض",
+   "🟢 الأخضر",
+   "🔴 الأحمر (الجنقل)"
+}
+local SelectedRock = nil
+
+Tab:CreateDropdown({
+   Name = "💎 ضرب حجر من بعيد",
+   Options = RockOptions,
+   CurrentOption = {},
+   Callback = function(opt)
+      SelectedRock = opt[1]
+      flags.RockFarm = true
+      task.spawn(function()
+         while flags.RockFarm and SelectedRock do
+            RE.punchEvent:FireServer("Punch")
+            task.wait(0.05)
+         end
+      end)
+   end
+})
+
+Tab:CreateButton({
+   Name = "⛔ إيقاف ضرب الأحجار",
+   Callback = function()
+      flags.RockFarm = false
+      SelectedRock = nil
+   end
+})
+
+--=====================[ 5) وضع إزالة اللاڨ (الشبح) ]=====================
+Tab:CreateToggle({
+   Name = "👻 وضع إزالة اللاڨ",
+   CurrentValue = false,
+   Callback = function(v)
+      flags.GhostMode = v
+      local gui = game:GetService("CoreGui")
+      if v then
+         for _,g in pairs(gui:GetChildren()) do
+            if g:IsA("ScreenGui") then
+               g.Enabled = false
+            end
+         end
+         game:GetService("SoundService").Volume = 0
+      else
+         for _,g in pairs(gui:GetChildren()) do
+            if g:IsA("ScreenGui") then
+               g.Enabled = true
+            end
+         end
+         game:GetService("SoundService").Volume = 1
+      end
+   end
+})
+
+--=====================[ 6) التحكم باللاعبين ]=====================
+local PlayerNames = {}
+for _,p in pairs(Players:GetPlayers()) do
+   if p ~= LP then table.insert(PlayerNames, p.Name) end
+end
+
+local TargetName = nil
+
+Tab:CreateDropdown({
+   Name = "🎯 اختيار لاعب",
+   Options = PlayerNames,
+   CurrentOption = {},
+   Callback = function(opt)
+      TargetName = opt[1]
+   end
+})
+
+Tab:CreateToggle({
+   Name = "🔪 قتل من بعيد (المختار)",
+   CurrentValue = false,
+   Callback = function(v)
+      flags.KillTarget = v
+      task.spawn(function()
+         while flags.KillTarget and TargetName do
+            RE.punchEvent:FireServer("Punch")
+            task.wait(0.05)
+         end
+      end)
+   end
+})
+
+Tab:CreateButton({
+   Name = "👁️ مشاهدة اللاعب",
+   Callback = function()
+      if TargetName and Players:FindFirstChild(TargetName) then
+         workspace.CurrentCamera.CameraSubject = Players[TargetName].Character:FindFirstChild("Humanoid")
+      end
+   end
+})
+
+Tab:CreateButton({
+   Name = "📊 تفاصيل اللاعب",
+   Callback = function()
+      if TargetName and Players:FindFirstChild(TargetName) then
+         local p = Players[TargetName]
+         local ls = p:FindFirstChild("leaderstats")
+         if ls then
+            Rayfield:Notify({
+               Title = "تفاصيل اللاعب",
+               Content = "القوة: "..ls.Strength.Value.." | الريبرث: "..ls.Rebirths.Value
+            })
+         end
+      end
+   end
+})
+
+Tab:CreateToggle({
+   Name = "💀 قتل الجميع",
+   CurrentValue = false,
+   Callback = function(v)
+      flags.KillAll = v
+      task.spawn(function()
+         while flags.KillAll do
+            RE.punchEvent:FireServer("Punch")
+            task.wait(0.05)
+         end
+      end)
+   end
+})
+
+--=====================[ 7) أزرار تبديل البتات ]=====================
+Tab:CreateSection("🐾 تبديل البتات")
+
+Tab:CreateButton({ Name="Swift Samurai ⚡", Callback=function() equipSeven("Swift Samurai") end })
+Tab:CreateButton({ Name="Tribal Overlord 🔁", Callback=function() equipSeven("Tribal Overlord") end })
+Tab:CreateButton({ Name="Mighty Monster 💪", Callback=function() equipSeven("Mighty Monster") end })
+Tab:CreateButton({ Name="Wild Wizard 🧙", Callback=function() equipSeven("Wild Wizard") end })
