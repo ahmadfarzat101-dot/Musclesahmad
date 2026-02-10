@@ -1,0 +1,90 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("Muscle Legends: ahmad Hub", "DarkScene")
+
+-- [[ Tabs ]]
+local FarmTab = Window:NewTab("Auto Farm")
+local CombatTab = Window:NewTab("Combat")
+local WorldTab = Window:NewTab("World & Chests")
+local PlayerTab = Window:NewTab("Player Settings")
+
+-- [[ 1. Auto Farm Section ]]
+local FarmSection = FarmTab:NewSection("Training")
+
+FarmSection:NewToggle("Auto Strength", "Lift Weight Fast", function(state)
+    _G.Lift = state
+    while _G.Lift do
+        game:GetService("Players").LocalPlayer.muscleEvent:FireServer("liftWeight")
+        task.wait()
+    end
+end)
+
+FarmSection:NewToggle("Auto Speed", "Run on Treadmill", function(state)
+    _G.Run = state
+    while _G.Run do
+        game:GetService("Players").LocalPlayer.muscleEvent:FireServer("runOnTreadmill")
+        task.wait()
+    end
+end)
+
+FarmSection:NewToggle("Auto Rebirth", "Automatic Rebirth", function(state)
+    _G.Rebirth = state
+    while _G.Rebirth do
+        game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer("rebirthRequest")
+        task.wait(0.2)
+    end
+end)
+
+-- [[ 2. Combat Section ]]
+local CombatSection = CombatTab:NewSection("Kill Features")
+
+CombatSection:NewToggle("Kill Aura", "Automatic Punch Nearby", function(state)
+    _G.Aura = state
+    while _G.Aura do
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= game.Players.LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                local mag = (v.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).magnitude
+                if mag < 25 then
+                    game:GetService("Players").LocalPlayer.muscleEvent:FireServer("punch", v.Name)
+                end
+            end
+        end
+        task.wait()
+    end
+end)
+
+CombatSection:NewToggle("Auto Brawl", "Join Brawls Automatically", function(state)
+    _G.Brawl = state
+    while _G.Brawl do
+        game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
+        task.wait(1)
+    end
+end)
+
+-- [[ 3. Player Settings ]]
+local PlayerSection = PlayerTab:NewSection("Power Up")
+
+PlayerSection:NewSlider("Jump Power", "High Jump", 500, 50, function(s)
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = s
+    game.Players.LocalPlayer.Character.Humanoid.UseJumpPower = true
+end)
+
+PlayerSection:NewSlider("Walk Speed", "Fast Move", 500, 16, function(s)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s
+end)
+
+-- [[ 4. World Section ]]
+local WorldSection = WorldTab:NewSection("Chests & Teleport")
+
+WorldSection:NewButton("Collect All Chests", "Farm Gems", function()
+    for _, v in pairs(game:GetService("Workspace").chests:GetChildren()) do
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+        task.wait(0.3)
+    end
+end)
+
+WorldSection:NewButton("Teleport to 100K (Eternal)", "Gym Teleport", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-6739, 15, -1283)
+end)
+
+-- Credits
+local Credits = PlayerTab:NewSection("Developed by: ahmad")
