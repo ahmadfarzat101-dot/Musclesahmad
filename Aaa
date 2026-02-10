@@ -1,0 +1,90 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("Muscle Legends: ahmad Hub", "DarkScene")
+
+-- [ القوائم الرئيسية ]
+local FarmTab = Window:NewTab("التدريب التلقائي")
+local CombatTab = Window:NewTab("القتال والمنافسة")
+local WorldTab = Window:NewTab("العوالم والصناديق")
+local PlayerTab = Window:NewTab("قدرات اللاعب")
+
+-- [[ 1. قسم التدريب الشامل ]]
+local FarmSection = FarmTab:NewSection("تطوير الخصائص (فائق)")
+
+FarmSection:NewToggle("تمرين القوة (Strength)", "يرفع الأثقال بسرعة فائقة", function(state)
+    _G.Lift = state
+    while _G.Lift do
+        game:GetService("Players").LocalPlayer.muscleEvent:FireServer("liftWeight")
+        task.wait() -- أقصى سرعة ممكنة
+    end
+end)
+
+FarmSection:NewToggle("تمرين السرعة (Speed)", "ركض تلقائي", function(state)
+    _G.Run = state
+    while _G.Run do
+        game:GetService("Players").LocalPlayer.muscleEvent:FireServer("runOnTreadmill")
+        task.wait()
+    end
+end)
+
+FarmSection:NewToggle("إعادة إحياء تلقائية (Auto Rebirth)", "يفتح الريبريث فوراً", function(state)
+    _G.Rebirth = state
+    while _G.Rebirth do
+        game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer("rebirthRequest")
+        task.wait(0.2)
+    end
+end)
+
+-- [[ 2. قسم القتال ]]
+local CombatSection = CombatTab:NewSection("القتال الذكي")
+
+CombatSection:NewToggle("القتل التلقائي (Kill Aura)", "يضرب أي شخص قريب منك", function(state)
+    _G.Aura = state
+    while _G.Aura do
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= game.Players.LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                local mag = (v.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).magnitude
+                if mag < 25 then
+                    game:GetService("Players").LocalPlayer.muscleEvent:FireServer("punch", v.Name)
+                end
+            end
+        end
+        task.wait()
+    end
+end)
+
+CombatSection:NewToggle("دخول المعارك (Auto Brawl)", "ينقلك للمعارك تلقائياً", function(state)
+    _G.Brawl = state
+    while _G.Brawl do
+        game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
+        task.wait(1)
+    end
+end)
+
+-- [[ 3. ميزة القفز العالي والسرعة ]]
+local PlayerSection = PlayerTab:NewSection("تعديل قدرات أحمد")
+
+PlayerSection:NewSlider("قوة القفز (Jump Power)", "اجعل قفزتك خارقة", 500, 50, function(s)
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = s
+    game.Players.LocalPlayer.Character.Humanoid.UseJumpPower = true
+end)
+
+PlayerSection:NewSlider("سرعة المشي (Speed)", "اجعل حركتك سريعة", 500, 16, function(s)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s
+end)
+
+-- [[ 4. العوالم والصناديق ]]
+local WorldSection = WorldTab:NewSection("المناطق والجوائز")
+
+WorldSection:NewButton("جمع كل صناديق الماب", "يجمع لك الجواهر", function()
+    for _, v in pairs(game:GetService("Workspace").chests:GetChildren()) do
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+        task.wait(0.3)
+    end
+end)
+
+WorldSection:NewButton("انتقال: منطقة 100K", "Eternal Gym", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-6739, 15, -1283)
+end)
+
+-- الحقوق
+local Credits = PlayerTab:NewSection("صنع بواسطة: ahmad")
